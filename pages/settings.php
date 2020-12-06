@@ -39,46 +39,6 @@ $field->addOption('Double Opt In verwenden', "1");
 $field->setNotice('Wenn Double Opt In eingeschaltet ist, wird bei einem neuen E-Mail Empfänger zunächst eine Bestätigungsmail verschickt. Hinweis: das funktioniert nur, wenn die API durch Cleverreach zertifiziert wurde.');
 
 
-
-
-/*
-
-$field = $form->addTextAreaField('assocfields');
-$field->setLabel('Assoziierte Feldnamen');
-$field->setNotice('Datenbankfeldern zu XML Namen assoziieren <code>dbfieldname::xmlfield</code> z.B. <code>titel::titelkurz</code>.<br>Optional mit Format Option. z.B. <code>datestart::beginndat::date(Y-m-d)</code><br>Mit <code>protected</code> an der 4. Stelle kann ein Feld vor dem Überschreiben geschützt werden. Es wird dann nur beim ersten Import des Kurses befüllt. Beispiel: <code>text::titellang::::protected</code>');
-
-$field = $form->addTextAreaField('bsmimport');
-$field->setLabel('Felddefinitionen für BSM Import');
-$field->setNotice('Feldbezeichnung und Feldname durch zwei Doppelpunkte <code>::</code> trennen.<br>Datumsfeld mit <code>::date(Y-m-d)</code> formatierbar.');
-
-$field = $form->addTextAreaField('viuimport');
-$field->setLabel('Felddefinitionen für VIU Import');
-
-$field = $form->addTextAreaField('objektimport');
-$field->setLabel('Felddefinitionen für Adressen/Objekte');
-
-$field = $form->addCheckboxField('debug');
-$field->setLabel('Debugmodus');
-$field->addOption('Debugmodus ein', "1");
-$field->setNotice('Im Debugmodus werden die E-Mails an vordefinierte E-Mail Adressen geschickt.');
-
-$field = $form->addTextField('viuemail');
-$field->setLabel('VIU E-Mail Adressen');
-$field->setNotice('Mehrere E-Mail-Adressen durch Komma trennen.');
-
-$field = $form->addTextField('bsmemail');
-$field->setLabel('BSM E-Mail Adressen');
-$field->setNotice('Mehrere E-Mail-Adressen durch Komma trennen.');
-
-$field = $form->addTextField('bsm_locked_steps');
-$field->setLabel('Arbeitsschritte, die für den BSM gesperrt sind');
-$field->setNotice('Werte durch Komma trennen.');
-
-$field = $form->addTextField('viu_locked_steps');
-$field->setLabel('Arbeitsschritte, die für den VIU gesperrt sind');
-*/
-
-
 $content = $form->get();
 
 $fragment = new rex_fragment();
