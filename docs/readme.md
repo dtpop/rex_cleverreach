@@ -63,7 +63,7 @@ $(".newsletter-anmeldung").on("submit", function (e) {
 </script>
 ```
 
-Die PHP Verarbeitung kann beispielsweise über die boot.php des Project Addons umgesetzt werden:
+Die PHP Verarbeitung kann beispielsweise über die boot.php des Project Addons umgesetzt werden. Im Beispielcode wird geprüft, ob der Access Token noch gültig ist. Falls dieser abgelaufen ist, wird versucht einen neuen Access Token aus dem Refresh Token zu generieren. Wenn das schief geht, wird ein Error ins Log geschrieben. Wenn im System die E-Mail Benachrichtigung im Fehlerfalle eingeschaltet ist, bekommt der Admin auch eine Nachricht, dass die Anmeldungen nicht mehr funktionieren.
 
 ```php
 if (rex::isFrontend()) {
@@ -75,7 +75,11 @@ if (rex::isFrontend()) {
             if (!$api->is_available()) {
                 if (!$api->refresh_token()) {
                     rex_logger::factory()->log('error','Cleverreach Access Key nicht mehr gültig und muss erneuert werden.');
-                }                         
+                } else {
+                    rex_logger::factory()->log('success','Cleverreach Access Key wurde aus dem Refresh Key erneuert.');
+                    $api = new rex_cr();
+                    $rest = $api->get_api();        
+                }
             }
 
             $group_id = rex_config::get('cleverreach', 'groupid');
@@ -89,7 +93,7 @@ if (rex::isFrontend()) {
                 "active" => false,
                 "registered" => time(),
                 "deactivated" => "0",
-                "source" => "SNBS Website",
+                "source" => "Website",
                 "attributes" => [
                     "salutation" => rex_request('salutation'),
                     "firstname" => rex_request('firstname'),
