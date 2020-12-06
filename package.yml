@@ -1,0 +1,20 @@
+package: cleverreach
+version: dev
+author: Project Admin
+supportpage: www.redaxo.org/de/forum/
+
+page:
+  title: 'Cleverreach'
+#  perm: sked[]
+  icon: rex-icon fa-envelope
+  subpages:
+      settings: 
+        title: 'Einstellungen'
+        icon: rex-icon fa-cogs
+      docs:
+        title: 'Hilfe'
+        perm: admin[]
+        itemclass: pull-right
+        subPath: docs/readme.md
+        pjax: false
+
