@@ -72,6 +72,11 @@ if (rex::isFrontend()) {
             $use_doi = rex_config::get('cleverreach', 'doi');
             $api = new rex_cr();
             $rest = $api->get_api();
+            if (!$api->is_available()) {
+                if (!$api->refresh_token()) {
+                    rex_logger::factory()->log('error','Cleverreach Access Key nicht mehr gültig und muss erneuert werden.');
+                }                         
+            }
 
             $group_id = rex_config::get('cleverreach', 'groupid');
             if (!$group_id) {
