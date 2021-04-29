@@ -12,6 +12,8 @@ Grundsätzlich funktioniert die Cleverreach API in der Form, dass der Access Tok
 
 Wenn die Einstellungsseite im Backend aufgerufen wird, wird die API aufgerufen und es wird der aktuelle Status angezeigt. Wenn der Access Token nicht mehr gültig ist, wird im Backend versucht über den Refresh Token einen neuen Access Token zu generieren. Erst wenn dieses fehlschlägt, muss man einen neuen Access Token manuell generieren. Ein entsprechender Link wird unten auf der Settings Seite angezeigt.
 
+Es kann für jede Sprache eine eigene Double Opt In Form Id eingetragen werden. Damit lassen sich die Responsetexte in Cleverreach für jede Sprache individuell setzen.
+
 ## Installation
 
 Das Addon wird zunächst installiert und aktiviert. Anschließend wird Client Id und Client Secret eingetragen und initial der Access Token gesetzt. Nun sollte in den Einstellungen unten ein grüner Balken erscheinen und die funktionierende api anzeigen.
@@ -106,9 +108,9 @@ if (rex::isFrontend()) {
 
             $success = false;
 
-            if ($use_doi && rex_config::get('cleverreach', 'doiformid')) {
+            if ($use_doi && rex_config::get('cleverreach', 'doiformid_'.rex_clang::getCurrentId())) {
                 if ($success = $rest->post('/groups/' . $group_id . '/receivers', $new_user)) {
-                    $success2 = $rest->post("/forms/" . rex_config::get('cleverreach', 'doiformid') . "/send/activate", [
+                    $success2 = $rest->post("/forms/" . rex_config::get('cleverreach', 'doiformid_'.rex_clang::getCurrentId()) . "/send/activate", [
                         "email"   => $new_user["email"],
                         "doidata" => [
                             "user_ip"    => $_SERVER["REMOTE_ADDR"],

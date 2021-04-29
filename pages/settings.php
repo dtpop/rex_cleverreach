@@ -29,14 +29,16 @@ $field = $form->addTextField('groupid');
 $field->setLabel('Group Id');
 $field->setNotice('Dieser Eintrag ist optional. Wenn hier nichts eingetragen ist, so wird die erste Gruppe verwendet, um neue Empfänger hinzuzufügen. Wenn hier eine Id eingetragen ist, so wird diese Gruppe verwendet. z.B. <code>233519</code>');
 
-$field = $form->addTextField('doiformid');
-$field->setLabel('Double Opt In Form Id');
-$field->setNotice('Falls Double Opt In verwendet werden soll, muss hier die Id des Opt In Formulars bei Cleverreach eingetragen werden. z.B. <code>335219</code>');
+foreach (rex_clang::getAll() as $clang) {
+    $field = $form->addTextField('doiformid_'.$clang->getId());
+    $field->setLabel('Double Opt In Form Id ['.$clang->getCode().']');
+    $field->setNotice('Falls Double Opt In verwendet werden soll, muss hier die Id des Opt In Formulars bei Cleverreach eingetragen werden. z.B. <code>335219</code>');
+}
 
 $field = $form->addCheckboxField('doi');
 $field->setLabel('Double Opt In');
 $field->addOption('Double Opt In verwenden', "1");
-$field->setNotice('Wenn Double Opt In eingeschaltet ist, wird bei einem neuen E-Mail Empfänger zunächst eine Bestätigungsmail verschickt. Hinweis: das funktioniert nur, wenn die API durch Cleverreach zertifiziert wurde.');
+$field->setNotice('Wenn Double Opt In eingeschaltet ist, wird bei einem neuen E-Mail Empfänger zunächst eine Bestätigungsmail verschickt. Hinweis: das funktioniert nur, wenn der Account von Cleverreach zertifiziert wurde. Die Accountdaten müssen komplett ausgefüllt sein.');
 
 
 $content = $form->get();
