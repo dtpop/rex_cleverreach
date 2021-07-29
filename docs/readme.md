@@ -34,6 +34,21 @@ Nun brauchen wir ein Formular. Wir gehen hier mal von einem HTML Formular aus. M
     <input name="func" type="hidden" value="subscribe">
     <button type="submit">Anmelden</button>
 </form>
+<div class="feedback_success" style="display:none;">
+    <p>
+        <strong>#Ihre Anmeldung war erfolgreich.#</strong>
+    </p>
+</div>
+<div class="feedback_error" style="display:none;">
+    <p>
+        <strong>#Es ist ein Fehler aufgetreten.#</strong>
+    </p>
+</div>
+<div class="feedback_duplicate" style="display:none;">
+    <p>
+        <strong>#Sie sind bereits registriert.#</strong>
+    </p>
+</div>
 ```
 
 Script:
@@ -55,6 +70,8 @@ $(".newsletter-anmeldung").on("submit", function (e) {
             if (result.responseText == "SUCCESS") {
                 $("form").hide();
                 $(".feedback_success").show();
+            } else if (result.responseText == "DUPLICATE") {
+                $(".feedback_duplicate").show();
             } else {
                 $(".feedback_error").show();
             }
@@ -124,7 +141,16 @@ if (rex::isFrontend()) {
                 $new_user['activated'] = time();
                 $success = $rest->post('/groups/' . $group_id . '/receivers', $new_user);
             }
-            echo $success ? 'SUCCESS' : 'ERROR';
+            $message = 'SUCCESS';
+            if (!$success) {
+                $error = json_decode($rest->error);
+                if (isset($error->error->message) && strpos($error->error->message,'duplicate address')) {
+                    $message = 'DUPLICATE';
+                } else {
+                    $message = 'ERROR';
+                }
+            }
+            echo $message;
             exit;
         }
     });

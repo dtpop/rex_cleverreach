@@ -141,6 +141,8 @@ class rest
         }
         $curl_post_data = $data;
 
+//        \rex_logger::factory()->log('info',$this->url . $path,[],__FILE__,__LINE__);
+
         $curl = curl_init($this->url . $path);
         $this->setupCurl($curl);
         curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
@@ -161,8 +163,12 @@ class rest
             $curl_post_data = json_encode($curl_post_data);
         }
 
+//        \rex_logger::factory()->log('info',$curl_post_data,[],__FILE__,__LINE__);
+
+
         curl_setopt($curl, CURLOPT_POSTFIELDS, $curl_post_data);
         $curl_response = curl_exec($curl);
+//        \rex_logger::factory()->log('info',$curl_response,[],__FILE__,__LINE__);        
         $headers = curl_getinfo($curl);
         curl_close($curl);
 

@@ -1,6 +1,6 @@
 package: cleverreach
-version: dev
-author: Project Admin
+version: '0.2'
+author: Wolfgang Bund
 supportpage: www.redaxo.org/de/forum/
 
 page:
