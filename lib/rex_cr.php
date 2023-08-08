@@ -37,6 +37,7 @@ class rex_cr
         $rest->error = false;
         $rest->throwExceptions = false;
         $rest->setAuthMode('bearer', $this->access_token);
+//        dump($rest);
         return $rest;
     }
 
@@ -47,6 +48,7 @@ class rex_cr
     public function is_available()
     {
         $rest = $this->get_api();
+//        dump($rest);
         return $rest->get('/v3/debug/validate');
     }
 

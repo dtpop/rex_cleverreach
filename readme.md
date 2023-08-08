@@ -12,6 +12,8 @@ Grundsätzlich funktioniert die Cleverreach API in der Form, dass der Access Tok
 
 Wenn die Einstellungsseite im Backend aufgerufen wird, wird die API aufgerufen und es wird der aktuelle Status angezeigt. Wenn der Access Token nicht mehr gültig ist, wird im Backend versucht über den Refresh Token einen neuen Access Token zu generieren. Erst wenn dieses fehlschlägt, muss man einen neuen Access Token manuell generieren. Ein entsprechender Link wird unten auf der Settings Seite angezeigt.
 
+Es kann für jede Sprache eine eigene Double Opt In Form Id eingetragen werden. Damit lassen sich die Responsetexte in Cleverreach für jede Sprache individuell setzen.
+
 ## Installation
 
 Das Addon wird zunächst installiert und aktiviert. Anschließend wird Client Id und Client Secret eingetragen und initial der Access Token gesetzt. Nun sollte in den Einstellungen unten ein grüner Balken erscheinen und die funktionierende api anzeigen.
@@ -32,6 +34,21 @@ Nun brauchen wir ein Formular. Wir gehen hier mal von einem HTML Formular aus. M
     <input name="func" type="hidden" value="subscribe">
     <button type="submit">Anmelden</button>
 </form>
+<div class="feedback_success" style="display:none;">
+    <p>
+        <strong>#Ihre Anmeldung war erfolgreich.#</strong>
+    </p>
+</div>
+<div class="feedback_error" style="display:none;">
+    <p>
+        <strong>#Es ist ein Fehler aufgetreten.#</strong>
+    </p>
+</div>
+<div class="feedback_duplicate" style="display:none;">
+    <p>
+        <strong>#Sie sind bereits registriert.#</strong>
+    </p>
+</div>
 ```
 
 Script:
@@ -53,6 +70,8 @@ $(".newsletter-anmeldung").on("submit", function (e) {
             if (result.responseText == "SUCCESS") {
                 $("form").hide();
                 $(".feedback_success").show();
+            } else if (result.responseText == "DUPLICATE") {
+                $(".feedback_duplicate").show();
             } else {
                 $(".feedback_error").show();
             }
@@ -84,7 +103,7 @@ if (rex::isFrontend()) {
 
             $group_id = rex_config::get('cleverreach', 'groupid');
             if (!$group_id) {
-                $groups = $rest->get("/groups");
+                $groups = $rest->get("/v3/groups");
                 $group_id = $groups[0]->id;
             }
 
@@ -106,9 +125,9 @@ if (rex::isFrontend()) {
 
             $success = false;
 
-            if ($use_doi && rex_config::get('cleverreach', 'doiformid')) {
-                if ($success = $rest->post('/groups/' . $group_id . '/receivers', $new_user)) {
-                    $success2 = $rest->post("/forms/" . rex_config::get('cleverreach', 'doiformid') . "/send/activate", [
+            if ($use_doi && rex_config::get('cleverreach', 'doiformid_'.rex_clang::getCurrentId())) {
+                if ($success = $rest->post('/v3/groups/' . $group_id . '/receivers', $new_user)) {
+                    $success2 = $rest->post("/v3/forms/" . rex_config::get('cleverreach', 'doiformid_'.rex_clang::getCurrentId()) . "/send/activate", [
                         "email"   => $new_user["email"],
                         "doidata" => [
                             "user_ip"    => $_SERVER["REMOTE_ADDR"],
@@ -120,9 +139,18 @@ if (rex::isFrontend()) {
             } else {
                 $new_user['active'] = true;
                 $new_user['activated'] = time();
-                $success = $rest->post('/groups/' . $group_id . '/receivers', $new_user);
+                $success = $rest->post('/v3/groups/' . $group_id . '/receivers', $new_user);
             }
-            echo $success ? 'SUCCESS' : 'ERROR';
+            $message = 'SUCCESS';
+            if (!$success) {
+                $error = json_decode($rest->error);
+                if (isset($error->error->message) && strpos($error->error->message,'duplicate address')) {
+                    $message = 'DUPLICATE';
+                } else {
+                    $message = 'ERROR';
+                }
+            }
+            echo $message;
             exit;
         }
     });
@@ -135,7 +163,7 @@ if (rex::isFrontend()) {
 
 Die Klasse kann auch für eigene Anwendungen verwendet werden.
 
-Mit `$rest = new rex_cr(); $api = $rest->get_api();` kann man sich ein neues Objekt machen, die api holen und ab da auch mit CR kommunizieren. Infos darüber findet ihr in der entsprechenden Dokumentation bei Cleverreach.
+Mit `$rest = new rex_cr(); $api = $rest->get_api();` kann man sich ein neues Objekt machen, die api holen und ab da auch mit CR kommunizieren. Infos darüber findet ihr in der entsprechenden Dokumentation bei Cleverreach. Naja ... sofern man dort von Dokumentation sprechen kann ...
 
 ## Weiterentwicklung
 

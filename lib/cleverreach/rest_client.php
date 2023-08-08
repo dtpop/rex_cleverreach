@@ -262,6 +262,9 @@ class rest
     {
         $this->header = $header;
 
+//        dump($header);
+//        dump($in);
+
         if ($this->checkHeader && isset($header["http_code"])) {
             if ($header["http_code"] < 200 || $header["http_code"] >= 300) {
                 //error!?
@@ -283,7 +286,7 @@ class rest
 
         switch ($this->returnFormat) {
             case 'json':
-                return json_decode($in);
+                return json_decode((string) $in);
                 break;
 
             default:

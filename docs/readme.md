@@ -103,7 +103,7 @@ if (rex::isFrontend()) {
 
             $group_id = rex_config::get('cleverreach', 'groupid');
             if (!$group_id) {
-                $groups = $rest->get("/groups");
+                $groups = $rest->get("/v3/groups");
                 $group_id = $groups[0]->id;
             }
 
@@ -126,8 +126,8 @@ if (rex::isFrontend()) {
             $success = false;
 
             if ($use_doi && rex_config::get('cleverreach', 'doiformid_'.rex_clang::getCurrentId())) {
-                if ($success = $rest->post('/groups/' . $group_id . '/receivers', $new_user)) {
-                    $success2 = $rest->post("/forms/" . rex_config::get('cleverreach', 'doiformid_'.rex_clang::getCurrentId()) . "/send/activate", [
+                if ($success = $rest->post('/v3/groups/' . $group_id . '/receivers', $new_user)) {
+                    $success2 = $rest->post("/v3/forms/" . rex_config::get('cleverreach', 'doiformid_'.rex_clang::getCurrentId()) . "/send/activate", [
                         "email"   => $new_user["email"],
                         "doidata" => [
                             "user_ip"    => $_SERVER["REMOTE_ADDR"],
@@ -139,7 +139,7 @@ if (rex::isFrontend()) {
             } else {
                 $new_user['active'] = true;
                 $new_user['activated'] = time();
-                $success = $rest->post('/groups/' . $group_id . '/receivers', $new_user);
+                $success = $rest->post('/v3/groups/' . $group_id . '/receivers', $new_user);
             }
             $message = 'SUCCESS';
             if (!$success) {
@@ -163,7 +163,7 @@ if (rex::isFrontend()) {
 
 Die Klasse kann auch für eigene Anwendungen verwendet werden.
 
-Mit `$rest = new rex_cr(); $api = $rest->get_api();` kann man sich ein neues Objekt machen, die api holen und ab da auch mit CR kommunizieren. Infos darüber findet ihr in der entsprechenden Dokumentation bei Cleverreach.
+Mit `$rest = new rex_cr(); $api = $rest->get_api();` kann man sich ein neues Objekt machen, die api holen und ab da auch mit CR kommunizieren. Infos darüber findet ihr in der entsprechenden Dokumentation bei Cleverreach. Naja ... sofern man dort von Dokumentation sprechen kann ...
 
 ## Weiterentwicklung
 
